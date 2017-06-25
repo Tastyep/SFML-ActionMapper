@@ -1,36 +1,74 @@
+#include <memory>
+
 #include <SFML/Window.hpp>
 
-#include "Actions.hpp"
+#include "ActionHandler.hpp"
 #include "KeyMapper.hpp"
 #include "KeyStateRecorder.hpp"
+#include "Manager.hpp"
 
-#include <iostream>
+class Window {
+ public:
+  Window()
+    : _window(sf::VideoMode(800, 600), "InputConverter") {}
 
-int main() {
-  sf::Window window(sf::VideoMode(800, 600), "InputConverter");
-  sf::Event event;
+  void run() {
+    sf::Event event;
 
-  InputConverter::KeyStateRecorder keyStateRecorder;
-  InputConverter::KeyMapper keyMapper;
+    this->init();
 
-  keyStateRecorder.observeKey(InputConverter::KeyCode::Escape);
-  keyMapper.map<InputConverter::Type<InputConverter::Action::ESCAPE>>(InputConverter::KeyCode::Escape);
-
-  while (window.isOpen()) {
-    keyStateRecorder.checkKeys();
-
-    while (window.pollEvent(event)) {
-      if (event.type == sf::Event::Closed) {
-        window.close();
+    while (_window.isOpen()) {
+      while (_window.pollEvent(event)) {
+        if (event.type == sf::Event::Closed) {
+          this->close();
+        }
       }
-    }
-
-    const auto pressedKeys = keyStateRecorder.pressedKeys();
-
-    for (auto keyCode : pressedKeys) {
-      auto hash = keyMapper[keyCode];
-      std::cout << "key Pressed: " << (int)keyCode << " hash: " << hash << std::endl;
+      _manager->run();
     }
   }
+
+ private:
+  void init() {
+    using InputConverter::KeyCode;
+    using InputConverter::Action;
+    auto keyStateRecorder = std::make_unique<InputConverter::KeyStateRecorder>();
+    auto keyMapper = std::make_unique<InputConverter::KeyMapper>();
+
+    keyStateRecorder->observeKey(KeyCode::Escape);
+    keyStateRecorder->observeKey(KeyCode::Up);
+    keyMapper->map(KeyCode::Escape, Action::ESCAPE);
+    keyMapper->map(KeyCode::Up, Action::UP);
+
+    _manager = std::make_unique<InputConverter::Manager>(std::move(keyStateRecorder), std::move(keyMapper));
+
+    _manager->dispatcher().registerHandler(Action::ESCAPE, std::make_shared<Handler>(*this));
+  }
+
+  void close() {
+    _window.close();
+  }
+
+ private:
+  struct Handler : public InputConverter::ActionHandler {
+    Handler(Window& window)
+      : _window(window) {}
+
+    void handle(InputConverter::Action) override {
+      _window.close();
+    }
+
+   private:
+    Window& _window;
+  };
+
+ private:
+  sf::Window _window;
+  std::unique_ptr<InputConverter::Manager> _manager;
+};
+
+int main() {
+  Window window;
+
+  window.run();
   return 0;
 }

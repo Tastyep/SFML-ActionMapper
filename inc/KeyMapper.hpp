@@ -4,7 +4,9 @@
 #include <cassert>
 #include <unordered_map>
 
-#include "HashGenerator.hpp"
+#include <SFML/Window/Keyboard.hpp>
+
+#include "Actions.hpp"
 
 namespace InputConverter {
 
@@ -14,12 +16,11 @@ class KeyMapper {
  public:
   KeyMapper() = default;
 
-  template <typename Action>
-  void map(KeyCode code) {
-    _keyMapper[code] = HashGenerator::hash<Action>();
+  void map(KeyCode code, Action a) {
+    _keyMapper[code] = a;
   }
 
-  size_t operator[](KeyCode code) const {
+  Action operator[](KeyCode code) const {
     auto it = _keyMapper.find(code);
     assert(it != _keyMapper.end());
 
@@ -27,7 +28,7 @@ class KeyMapper {
   }
 
  private:
-  std::unordered_map<KeyCode, size_t> _keyMapper;
+  std::unordered_map<KeyCode, Action> _keyMapper;
 };
 
 } /* namespace InputConverter */
