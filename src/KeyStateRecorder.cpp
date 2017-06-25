@@ -2,7 +2,7 @@
 
 #include <algorithm>
 
-namespace ActionMapper {
+namespace InputConverter {
 
 void KeyStateRecorder::observeKey(KeyCode keyCode) {
   if (std::find_if(_keys.begin(), _keys.end(),                                 //
@@ -29,4 +29,4 @@ std::vector<KeyCode> KeyStateRecorder::pressedKeys() const {
   return pressedKeys;
 }
 
-} /* namespace ActionMapper */
+} /* namespace InputConverter */

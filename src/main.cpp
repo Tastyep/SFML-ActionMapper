@@ -1,15 +1,20 @@
 #include <SFML/Window.hpp>
 
+#include "Actions.hpp"
+#include "KeyMapper.hpp"
 #include "KeyStateRecorder.hpp"
 
 #include <iostream>
 
 int main() {
-  sf::Window window(sf::VideoMode(800, 600), "ActionMapper");
+  sf::Window window(sf::VideoMode(800, 600), "InputConverter");
   sf::Event event;
-  ActionMapper::KeyStateRecorder keyStateRecorder;
 
-  keyStateRecorder.observeKey(ActionMapper::KeyCode::Escape);
+  InputConverter::KeyStateRecorder keyStateRecorder;
+  InputConverter::KeyMapper keyMapper;
+
+  keyStateRecorder.observeKey(InputConverter::KeyCode::Escape);
+  keyMapper.map<InputConverter::Type<InputConverter::Action::ESCAPE>>(InputConverter::KeyCode::Escape);
 
   while (window.isOpen()) {
     keyStateRecorder.checkKeys();
@@ -23,7 +28,8 @@ int main() {
     const auto pressedKeys = keyStateRecorder.pressedKeys();
 
     for (auto keyCode : pressedKeys) {
-      std::cout << "key Pressed: " << (int)keyCode << std::endl;
+      auto hash = keyMapper[keyCode];
+      std::cout << "key Pressed: " << (int)keyCode << " hash: " << hash << std::endl;
     }
   }
   return 0;

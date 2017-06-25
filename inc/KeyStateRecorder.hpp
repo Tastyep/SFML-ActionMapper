@@ -1,11 +1,11 @@
-#ifndef ACTION_MAPPER_KEY_STATE_RECORDER
-#define ACTION_MAPPER_KEY_STATE_RECORDER
+#ifndef INPUT_CONVERTER_KEY_STATE_RECORDER_HPP
+#define INPUT_CONVERTER_KEY_STATE_RECORDER_HPP
 
 #include <vector>
 
 #include <SFML/Window/Keyboard.hpp>
 
-namespace ActionMapper {
+namespace InputConverter {
 
 using KeyCode = sf::Keyboard::Key;
 
@@ -31,6 +31,6 @@ class KeyStateRecorder {
   std::vector<KeyState> _keys;
 };
 
-} /* namespace ActionMapper */
+} /* namespace InputConverter */
 
 #endif

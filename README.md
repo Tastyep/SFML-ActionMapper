@@ -1,1 +1,1 @@
-# SFML-ActionMapper
+# SFML-InputConverter
