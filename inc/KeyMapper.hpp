@@ -6,12 +6,11 @@
 
 #include <SFML/Window/Keyboard.hpp>
 
-#include "Actions.hpp"
-
 namespace InputConverter {
 
 using KeyCode = sf::Keyboard::Key;
 
+template <typename Action>
 class KeyMapper {
  public:
   KeyMapper() = default;

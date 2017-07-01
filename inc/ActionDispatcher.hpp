@@ -9,15 +9,27 @@
 
 namespace InputConverter {
 
-class ActionDispatcher {
+template <typename Action>
+class Dispatcher {
  public:
-  ActionDispatcher() = default;
+  Dispatcher() = default;
 
-  void registerHandler(Action action, std::shared_ptr<ActionHandler> handler);
-  void dispatch(Action action) const;
+  void registerHandler(Action action, std::shared_ptr<ActionHandler<Action>> handler) {
+    _handlers[action].emplace_back(std::move(handler));
+  }
+
+  void dispatch(Action action) const {
+    auto it = _handlers.find(action);
+
+    if (it != _handlers.end()) {
+      for (const auto& handler : it->second) {
+        handler->handle(action);
+      }
+    }
+  }
 
  private:
-  std::unordered_map<Action, std::vector<std::shared_ptr<ActionHandler>>> _handlers;
+  std::unordered_map<Action, std::vector<std::shared_ptr<ActionHandler<Action>>>> _handlers;
 };
 
 } /* namespace InputConverter */

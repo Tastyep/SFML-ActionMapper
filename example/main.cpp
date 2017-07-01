@@ -3,9 +3,9 @@
 #include <SFML/Window.hpp>
 
 #include "ActionHandler.hpp"
-#include "KeyMapper.hpp"
-#include "KeyStateRecorder.hpp"
 #include "Manager.hpp"
+
+#include "Actions.hpp"
 
 class Window {
  public:
@@ -30,16 +30,15 @@ class Window {
  private:
   void init() {
     using InputConverter::KeyCode;
-    using InputConverter::Action;
     auto keyStateRecorder = std::make_unique<InputConverter::KeyStateRecorder>();
-    auto keyMapper = std::make_unique<InputConverter::KeyMapper>();
+    auto keyMapper = std::make_unique<InputConverter::KeyMapper<Action>>();
 
     keyStateRecorder->observeKey(KeyCode::Escape);
     keyStateRecorder->observeKey(KeyCode::Up);
     keyMapper->map(KeyCode::Escape, Action::ESCAPE);
     keyMapper->map(KeyCode::Up, Action::UP);
 
-    _manager = std::make_unique<InputConverter::Manager>(std::move(keyStateRecorder), std::move(keyMapper));
+    _manager = std::make_unique<InputConverter::Manager<Action>>(std::move(keyStateRecorder), std::move(keyMapper));
 
     _manager->dispatcher().registerHandler(Action::ESCAPE, std::make_shared<Handler>(*this));
   }
@@ -49,11 +48,11 @@ class Window {
   }
 
  private:
-  struct Handler : public InputConverter::ActionHandler {
+  struct Handler : public InputConverter::ActionHandler<Action> {
     Handler(Window& window)
       : _window(window) {}
 
-    void handle(InputConverter::Action) override {
+    void handle(Action) override {
       _window.close();
     }
 
@@ -63,7 +62,7 @@ class Window {
 
  private:
   sf::Window _window;
-  std::unique_ptr<InputConverter::Manager> _manager;
+  std::unique_ptr<InputConverter::Manager<Action>> _manager;
 };
 
 int main() {

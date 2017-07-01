@@ -13,11 +13,12 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -Wall -Wextra")
 
 include_directories (${PROJECT_SOURCE_DIR}/inc)
 
-file (GLOB headers "*.h")
+file (GLOB headers "*.hpp")
 file (GLOB sources "*.cpp")
 
 set (DIRS ${PROJECT_SOURCE_DIR}/inc
-          ${PROJECT_SOURCE_DIR}/src)
+          ${PROJECT_SOURCE_DIR}/src
+          ${PROJECT_SOURCE_DIR}/example)
 
 foreach (dir ${DIRS})
    file (GLOB h_${dir} "${dir}/*.h")
