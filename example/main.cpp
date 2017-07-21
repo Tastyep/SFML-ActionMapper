@@ -10,7 +10,9 @@
 class Window {
  public:
   Window()
-    : _window(sf::VideoMode(800, 600), "InputConverter") {}
+    : _window(sf::VideoMode(800, 600), "InputConverter") {
+    _window.setFramerateLimit(30);
+  }
 
   void run() {
     sf::Event event;
@@ -23,24 +25,19 @@ class Window {
           this->close();
         }
       }
-      _manager->run();
+      _manager.run();
+      _window.display();
     }
   }
 
  private:
   void init() {
-    using InputConverter::KeyCode;
-    auto keyStateRecorder = std::make_unique<InputConverter::KeyStateRecorder>();
-    auto keyMapper = std::make_unique<InputConverter::KeyMapper<Action>>();
+    using Key = sf::Keyboard::Key;
 
-    keyStateRecorder->observeKey(KeyCode::Escape);
-    keyStateRecorder->observeKey(KeyCode::Up);
-    keyMapper->map(KeyCode::Escape, Action::ESCAPE);
-    keyMapper->map(KeyCode::Up, Action::UP);
+    _manager.bind(Key::Escape, Action::ESCAPE);
+    _manager.bind(Key::Up, Action::UP);
 
-    _manager = std::make_unique<InputConverter::Manager<Action>>(std::move(keyStateRecorder), std::move(keyMapper));
-
-    _manager->dispatcher().registerHandler(Action::ESCAPE, std::make_shared<Handler>(*this));
+    _manager.dispatcher()->registerHandler(Action::ESCAPE, std::make_shared<Handler>(*this));
   }
 
   void close() {
@@ -62,7 +59,7 @@ class Window {
 
  private:
   sf::Window _window;
-  std::unique_ptr<InputConverter::Manager<Action>> _manager;
+  InputConverter::Manager<Action> _manager;
 };
 
 int main() {

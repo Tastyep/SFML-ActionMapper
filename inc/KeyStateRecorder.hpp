@@ -7,23 +7,20 @@
 
 namespace InputConverter {
 
-using KeyCode = sf::Keyboard::Key;
-
 class KeyStateRecorder {
  public:
-  KeyStateRecorder() = default;
-
-  void observeKey(KeyCode key);
+  void observeKey(sf::Keyboard::Key key);
+  bool forgetKey(sf::Keyboard::Key key);
   void checkKeys();
-  std::vector<KeyCode> pressedKeys() const;
+  std::vector<sf::Keyboard::Key> pressedKeys() const;
 
  private:
   struct KeyState {
-    explicit KeyState(KeyCode code, bool state = false)
+    explicit KeyState(sf::Keyboard::Key code, bool state = false)
       : code(code)
       , state(state) {}
 
-    KeyCode code;
+    sf::Keyboard::Key code;
     bool state;
   };
 

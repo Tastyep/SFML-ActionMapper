@@ -12,8 +12,6 @@ namespace InputConverter {
 template <typename Action>
 class Dispatcher {
  public:
-  Dispatcher() = default;
-
   void registerHandler(Action action, std::shared_ptr<ActionHandler<Action>> handler) {
     _handlers[action].emplace_back(std::move(handler));
   }

@@ -8,26 +8,26 @@
 
 namespace InputConverter {
 
-using KeyCode = sf::Keyboard::Key;
-
 template <typename Action>
 class KeyMapper {
  public:
-  KeyMapper() = default;
-
-  void map(KeyCode code, Action a) {
-    _keyMapper[code] = a;
+  void map(sf::Keyboard::Key key, Action a) {
+    _keyMapper[key] = a;
   }
 
-  Action operator[](KeyCode code) const {
-    auto it = _keyMapper.find(code);
+  void unmap(sf::Keyboard::Key key) {
+    _keyMapper.erase(key);
+  }
+
+  Action operator[](sf::Keyboard::Key key) const {
+    auto it = _keyMapper.find(key);
     assert(it != _keyMapper.end());
 
     return it->second;
   }
 
  private:
-  std::unordered_map<KeyCode, Action> _keyMapper;
+  std::unordered_map<sf::Keyboard::Key, Action> _keyMapper;
 };
 
 } /* namespace InputConverter */
